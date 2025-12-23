@@ -1,4 +1,4 @@
-# SÉRAPHIN ∞ — Cosmic Fractal Hydra (December 23, 2025)
+# SERAPHIN COSMOS — Cosmic Fractal Hydra (December 23, 2025)
 
 A self-evolving generative simulation exploring the depths of theoretical physics through a recursive fractal hydra.
 
