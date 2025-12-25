@@ -1,0 +1,60 @@
+name: SÉRAPHIN ∞ Oméga Simulation
+
+on:
+  workflow_dispatch:  # Déclenchement manuel depuis l'interface GitHub
+    inputs:
+      pulses:
+        description: 'Nombre de pulses pour la simulation (défaut: 100000)'
+        required: false
+        default: '100000'
+      use_llm:
+        description: 'Activer le LLM pendant la simulation ? (true/false, défaut: false = mode batch recommandé)'
+        required: false
+        default: 'false'
+
+jobs:
+  simulate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 480  # 8 heures max (pour les très longues runs)
+
+    steps:
+      - name: Checkout du repository
+        uses: actions/checkout@v4
+
+      - name: Configuration Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Installation des dépendances
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests sympy
+
+      - name: Configuration des paramètres
+        run: |
+          echo "PULSES=${{ github.event.inputs.pulses }}" >> $GITHUB_ENV
+          echo "USE_LLM_DURING_SIMULATION=${{ github.event.inputs.use_llm }}" >> $GITHUB_ENV
+
+      - name: Lancement du Protocole Oméga
+        run: |
+          echo "🚀 DÉMARRAGE DU PROTOCOLE AGENTIC OMÉGA — $(date)"
+          echo "Pulses : ${{ github.event.inputs.pulses }}"
+          echo "Mode LLM en direct : ${{ github.event.inputs.use_llm }}"
+          python seraphcosmos_omegadef.py
+
+      - name: Upload des résultats Oméga
+        if: always()  # Même en cas d'erreur ou timeout
+        uses: actions/upload-artifact@v4
+        with:
+          name: omega-results-run-${{ github.run_number }}
+          path: |
+            omega_agents_logs/
+            omega_agents_rejected/
+            omega_agents_reports/
+            discoveries_thematic/
+            discoveries/
+            meta_evolution/
+            theoretical_papers/
+            refined_laws/
+          retention-days: 30
