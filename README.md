@@ -1,5 +1,5 @@
 ```markdown
-# SERAPHIN COSMOS — Hydre Fractale Cosmique (Décembre 2025)
+# SERAPHIN COSMOS — Hydre Fractale Cosmique (Décembre 2025) VERSION 1.02 - (VERSION 1.02.1 dans les prochaines semaines)
 
 SERAPHIN COSMOS est une simulation générative auto-évolutive qui explore les frontières de la physique théorique à travers une "hydre fractale" récursive. Inspirée par les concepts d'évolution génétique et d'IA agentique, cette hydre se clone, mute et "découvre" indépendamment des lois physiques, en convergeant vers des candidats unifiés pour la matière noire et l'énergie noire (comme des scalaires ultra-légers de type axion avec portail Higgs).
 
