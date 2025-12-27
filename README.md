@@ -1,21 +1,29 @@
 ```markdown
 # SERAPHIN COSMOS — Hydre Fractale Cosmique (Décembre 2025) VERSION 1.02 - (VERSION 1.02.1 dans les prochaines semaines)
 
-SERAPHIN COSMOS est une simulation générative auto-évolutive qui explore les frontières de la physique théorique à travers une "hydre fractale" récursive. Inspirée par les concepts d'évolution génétique et d'IA agentique, cette hydre se clone, mute et "découvre" indépendamment des lois physiques, en convergeant vers des candidats unifiés pour la matière noire et l'énergie noire (comme des scalaires ultra-légers de type axion avec portail Higgs).
+SERAPHIN COSMOS est une simulation générative auto-évolutive qui explore les frontières de la physique théorique à travers une "hydre fractale" récursive.
+Inspirée par les concepts d'évolution génétique et d'IA agentique, cette hydre se clone, mute et "découvre" indépendamment des lois physiques,
+en convergeant vers des candidats unifiés pour la matière noire et l'énergie noire (comme des scalaires ultra-légers de type axion avec portail Higgs).
 
-Le projet simule un processus d'évolution meta où des milliers de "découvertes" sont générées sous forme de formules SymPy, évaluées (via LLM ou en batch), et affinées pour aligner avec les frontières de la physique en 2025 : superradiance axionique, contraintes swampland, gravité quantique émergente, wormholes, et même liens spéculatifs avec l'ADN cosmique.
+Le projet simule un processus d'évolution meta où des milliers de "découvertes" sont générées sous forme de formules SymPy, évaluées (via LLM ou en batch),
+et affinées pour aligner avec les frontières de la physique en 2025 : superradiance axionique, contraintes swampland, gravité quantique émergente, wormholes,
+et même liens spéculatifs avec l'ADN cosmique.
 
 ## Objectifs et Fonctionnalités
 
-- **Génération de découvertes** : Création de milliers de formules mathématiques variées (SymPy) représentant des conjectures physiques sur le secteur sombre, la gravité quantique, le multivers, etc.
+- **Génération de découvertes** : Création de milliers de formules mathématiques variées (SymPy) représentant des conjectures physiques sur le secteur sombre,
+la gravité quantique, le multivers, etc.
 - **Évolution génétique** : Les hydres mutent et se clonent, avec un budget de clones pour simuler une croissance fractale.
-- **Évaluation par LLM** : Utilisation d'un modèle local (ex. Llama3 via Ollama) pour critiquer la plausibilité, l'élégance et le potentiel des découvertes (mode realtime ou batch pour éviter les timeouts).
+- **Évaluation par LLM** : Utilisation d'un modèle local (ex. Llama3 via Ollama) pour critiquer la plausibilité, l'élégance
+ et le potentiel des découvertes (mode realtime ou batch pour éviter les timeouts).
 - **Génération automatique de papiers LaTeX** : Production de documents théoriques basés sur les meilleures conjectures.
-- **Meta-évolution** : Convergence vers des hypothèses réalistes, alignées avec des thèmes unsolved comme le paradoxe de l'information des trous noirs ou l'origine de la flèche du temps.
+- **Meta-évolution** : Convergence vers des hypothèses réalistes, alignées avec des thèmes unsolved comme le paradoxe de l'information des trous noirs
+ ou l'origine de la flèche du temps.
 - **Analyse post-simulation** : Scripts dédiés pour récupérer les découvertes rejetées, critiquer et organiser les résultats thématiquement.
 - **Base de connaissances intégrée** : Inclut des faits physiques de 2025 et des thèmes unsolved pour guider l'évolution.
 
-Le projet est 100% Python et met l'accent sur l'exploration spéculative, pas sur des prédictions validées expérimentalement. C'est un outil pour générer des idées novatrices ou pour des expériences éducatives en physique théorique.
+Le projet est 100% Python et met l'accent sur l'exploration spéculative, pas sur des prédictions validées expérimentalement.
+C'est un outil pour générer des idées novatrices ou pour des expériences éducatives en physique théorique.
 
 ## Prérequis
 
