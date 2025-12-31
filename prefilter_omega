@@ -1,0 +1,212 @@
+# prefilter_omega.py - Avec progression visuelle + résumé final détaillé
+import os
+import json
+import sympy as sp
+from constants_config import DIM_MAP, ALL_SYMBOLS
+from datetime import datetime
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+MEMORY_FILE = "hydra_memory.json"
+
+def load_memory():
+    if not os.path.exists(MEMORY_FILE):
+        logging.error("hydra_memory.json non trouvé !")
+        return {}
+    try:
+        with open(MEMORY_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return data.get("formulas", {})
+    except Exception as e:
+        logging.error(f"Erreur lecture : {e}")
+        return {}
+
+def save_memory(formulas_dict):
+    try:
+        # --- LOGIQUE DE TRI DÉCROISSANT ---
+        # On transforme le dictionnaire en liste de tuples (clé, valeur)
+        # On trie sur la valeur du champ "score" (par défaut 0 si absent)
+        sorted_formulas = sorted(
+            formulas_dict.items(),
+            key=lambda x: x[1].get("score", 0),
+            reverse=True
+        )
+        
+        # On reconstruit un dictionnaire ordonné
+        ordered_data = {"formulas": dict(sorted_formulas)}
+        
+        # Si tu as aussi des statistiques globales (stats) dans ton fichier, 
+        # on peut les préserver ici si nécessaire.
+        
+        with open(MEMORY_FILE, "w", encoding="utf-8") as f:
+            json.dump(ordered_data, f, indent=4, ensure_ascii=False)
+            
+        logging.info(f"✨ hydra_memory.json trié par SCORE et mis à jour ({len(formulas_dict)} formules)")
+    except Exception as e:
+        logging.error(f"Erreur écriture : {e}")
+
+# Fonctions de scoring (identiques à la version précédente, mais avec messages plus clairs)
+def dimensional_coherence(formula_str):
+    try:
+        expr = sp.sympify(formula_str, locals=ALL_SYMBOLS)
+        symbols = expr.free_symbols
+        if not symbols:
+            return 500, "pas_de_variables_libres"
+        subs = {s: DIM_MAP.get(str(s), 1) for s in symbols}
+        expr.subs(subs)
+        return 3000, "coherent"
+    except Exception:
+        return 300, "incoherence_grave"
+
+def length_elegance(formula_str):
+    length = len(formula_str)
+    if length < 20:
+        return 800, "trop_simple"
+    elif length < 50:
+        return 2500, "simple_elegante"
+    elif length < 100:
+        return 3000, "longueur_ideale"
+    elif length < 150:
+        return 2200, "bonne_mais_dense"
+    else:
+        return 1000, "trop_complexe"
+
+def mathematical_sophistication(formula_str):
+    score = 500
+    sophisticated = ['exp', 'log', 'sqrt', 'tanh', 'Heaviside', 'besselj', 'Abs']
+    for func in sophisticated:
+        if func in formula_str:
+            score += 300
+    if '**' in formula_str and not any(c in formula_str for c in ['**2', '**3', '**4']):
+        score += 400
+    if len(set(formula_str.split('*'))) > 3:
+        score += 300
+    return min(score, 2000), "sophistication_ok"
+
+def physical_plausibility(formula_str):
+    score = 500
+    good_patterns = ['exp(-', 'Heaviside', 'sqrt(', 'log(', '/M_p', '/l_p', '*H_0', '*Lambda']
+    for pat in good_patterns:
+        if pat in formula_str:
+            score += 250
+
+    trig_funcs = ['sin(', 'cos(']
+    bad_constants = ['G', 'c', 'hbar', 'M_p', 'H_0', 'k_B', 'Lambda', 'Omega_m', 'Omega_L', 'f_a', 'mu', 'sigma']
+    
+    for trig in trig_funcs:
+        if trig in formula_str:
+            parts = formula_str.split(trig)
+            for part in parts[1:]:
+                if ')' in part:
+                    arg = part.split(')')[0].strip()
+                    if any(bad in arg for bad in bad_constants):
+                        score -= 800
+                        break
+
+    return max(score, 200), "plausibilite_ok"
+
+def sort_formulas_by_score():
+    global HYDRA_MEMORY
+    # On transforme le dictionnaire en liste d'items pour pouvoir le trier
+    # .items() donne (formule, données)
+    sorted_formulas = dict(sorted(
+        HYDRA_MEMORY["formulas"].items(), 
+        key=lambda item: item[1].get("score", 0), 
+        reverse=True  # True pour décroissant (les plus hauts scores en premier)
+    ))
+    
+    # On remplace la mémoire par la version triée
+    HYDRA_MEMORY["formulas"] = sorted_formulas
+
+def prefilter_with_visual_progress():
+    memory = load_memory()
+    if not memory:
+        return
+
+    total = len(memory)
+    print(f"🔄 Analyse fine de {total} formules en cours...")
+
+    score_bins = {
+        "0-1999  → bruit pur": 0,
+        "2000-3999 → perfectible": 0,
+        "4000-5999 → intéressante": 0,
+        "6000-7999 → prometteuse": 0,
+        "8000-10000 → excellente": 0
+    }
+    examples = {key: [] for key in score_bins}
+
+    for i, (key, entry) in enumerate(memory.items(), 1):
+        formula = entry.get("formula", "")
+        if not formula:
+            continue
+
+        dim_score, dim_r = dimensional_coherence(formula)
+        len_score, len_r = length_elegance(formula)
+        soph_score, soph_r = mathematical_sophistication(formula)
+        phys_score, phys_r = physical_plausibility(formula)
+
+        total_score = dim_score + len_score + soph_score + phys_score
+
+        reasons = [dim_r, len_r, soph_r, phys_r]
+        reasons = [r for r in reasons if "ok" not in r and "coherent" not in r]
+
+        status = (
+            "excellente" if total_score >= 8000 else
+            "prometteuse" if total_score >= 6000 else
+            "intéressante" if total_score >= 4000 else
+            "perfectible" if total_score >= 2000 else
+            "bruit"
+        )
+
+        entry.update({
+            "score": total_score,
+            "score_breakdown": {
+                "dimensional": dim_score,
+                "length": len_score,
+                "sophistication": soph_score,
+                "plausibility": phys_score
+            },
+            "original_reason": ", ".join(reasons) if reasons else "excellente",
+            "prefilter_status": status,
+            "prefilter_date": datetime.now().isoformat(),
+            "learning_potential": "strong_positive" if total_score >= 7000 else
+                                 "positive" if total_score >= 5000 else
+                                 "mixed" if total_score >= 3000 else
+                                 "negative_example"
+        })
+
+        # Mise à jour du compteur et exemple
+        for bin_name, _ in score_bins.items():
+            # Extrait correctement les nombres des noms comme "0-1999  → bruit pur" ou "8000-10000 → excellente"
+            parts = bin_name.split()[0]  # prend "0-1999" ou "8000-10000" ou "2000-3999"
+            low_str, high_str = parts.split('-')
+            low = int(low_str)
+            high = 10000 if '>' in bin_name or '=' in bin_name else int(high_str)
+
+            if low <= total_score < high or ('>=' in bin_name and total_score >= low):
+                score_bins[bin_name] += 1
+                if len(examples[bin_name]) < 2:  # garde 2 exemples par tranche
+                    examples[bin_name].append(f"{total_score} : {formula[:60]}...")
+
+        # Progression visuelle écrasée
+        progress = f"Formule {i}/{total} | Score moyen : {sum(e.get('score',0) for e in memory.values())//i if i>0 else 0:5} | {status[:15]:15}"
+        print(progress, end="\r", flush=True)
+
+    save_memory(memory)
+
+    # Résumé final
+    print("\n\n" + "="*80)
+    print("✅ PRÉFILTRE TERMINÉ – RÉPARTITION DES SCORES")
+    print("="*80)
+    for bin_name, count in score_bins.items():
+        print(f"{bin_name:30} : {count:5} formules")
+        for ex in examples[bin_name]:
+            print(f"     → {ex}")
+    print("="*80)
+    print(f"Total analysé : {total}")
+    print(f"hydra_memory.json enrichi avec scores fins et breakdown détaillé")
+    print("Ton Hydre a maintenant un 'feeling' ultra-précis pour évoluer !")
+
+if __name__ == "__main__":
+    prefilter_with_visual_progress()
