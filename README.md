@@ -75,7 +75,7 @@ python seraphcosmos_omegadef.py
 ### Étape 3 : Récupérer les Découvertes Rejetées
 Pour corriger d'éventuelles erreurs de rejet (par exemple dues à des timeouts LLM ou des évaluations trop strictes) :
 ```
-python recover_rejected_discoveries.py
+python prefilter_omega.py
 ```
 - Ce script réexamine les découvertes rejetées, les réévalue si nécessaire et les rend à nouveau disponibles pour l'analyse.
 
